@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+    <style>
+        .time {
+            width: 60px;
+        }
+    </style>
+
+    <script>
+        (function() {
+            window.playerHelper = {
+                parseYoutubeUrl: function (url) {
+                    var startH = parseInt(document.getElementById('startH').value);
+                    var startM = parseInt(document.getElementById('startM').value);
+                    var startS = parseInt(document.getElementById('startS').value);
+                    var endH = parseInt(document.getElementById('endH').value);
+                    var endM = parseInt(document.getElementById('endM').value);
+                    var endS = parseInt(document.getElementById('endS').value);
+
+                    var startTime = startH * 60 * 60 + startM * 60 + startS;
+                    var endTime = endH * 60 * 60 + endM * 60 + endS;
+
+                    var youtubeRegEx = /(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/(?:watch|v|embed)(?:\.php)?(?:\?.*v=|\/))([a-zA-Z0-9\_-]+)/g;
+                    var parsedUrl = youtubeRegEx.exec(url);
+
+                    var result = null;
+
+                    if (parsedUrl != null) {
+                        result = 'https://www.youtube.com/embed/' + parsedUrl[1];
+                        if (startTime != 0) {
+                            result += '?start=' + startTime;
+                            if (endTime != 0 && startTime < endTime) {
+                                result += '&' + 'end=' + endTime;
+                            }
+                        }
+                    }
+                    
+                    return result;
+                },
+
+                getTimedURL : function() {
+                    var url = document.getElementById('url').value;
+                    var urlEmbed = this.parseYoutubeUrl(url);
+                    
+                    document.getElementById('urlResult').value = urlEmbed ? urlEmbed : 'Not valid YouTube URL, please check URL you provide.';
+                },
+
+                playHere : function() {
+                    var playerFrame = document.getElementById('YouTubeEmbed');
+                    playerFrame.setAttribute('src', document.getElementById('urlResult').value);
+                    playerFrame.style.display = '';
+
+                    document.getElementById('btnClose').style.display = '';
+                },
+
+                closePlayer : function() {
+                    var playerFrame = document.getElementById('YouTubeEmbed');
+                    playerFrame.setAttribute('src', '');
+                    playerFrame.style.display = 'none';
+
+                    document.getElementById('btnClose').style.display = 'none';
+                }
+            }
+        })();
+    </script>
+</head>
+<body>
+    <div class="container" style="margin-top: 20px;">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label for="url" class="col-xs-2">URL:</label>
+                <div class="col-xs-10">
+                    <input id="url" class="form-control" placeholder="https://www.youtube.com/watch?v=ABCdef">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2">Start (hh:mm:ss):</label>
+                <div class="col-xs-10">
+                    <input id="startH" type="number" value="0" class="time">
+                    <input id="startM" type="number" value="0" class="time">
+                    <input id="startS" type="number" value="0" class="time">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2">End (hh:mm:ss):</label>
+                <div class="col-xs-10">
+                    <input id="endH" type="number" value="0" class="time">
+                    <input id="endM" type="number" value="0" class="time">
+                    <input id="endS" type="number" value="0" class="time">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-10 col-xs-offset-2">
+                    <button onclick="window.playerHelper.getTimedURL()">Get URL</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="urlResult" class="col-xs-2">Result URL:</label>
+                <div class="col-xs-10">
+                    <input id="urlResult" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-12 col-xs-offset-2">
+                    <button onclick="window.playerHelper.playHere()">Play here</button>
+                    <button onclick="window.playerHelper.closePlayer()" id="btnClose" style="display: none;">Close player</button>
+                </div>
+            </div>
+        </div>
+
+        <iframe id="YouTubeEmbed" width="800" height="600" src="" style="display: none;"></iframe>
+    </div>
+</body>
+</html>
