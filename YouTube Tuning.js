@@ -1,5 +1,11 @@
 // Tune YouTube
 // After running the script from a bookmark link, select player e.g. rigth mouse key.
+// Press Shift+1, Shift+2 or Shift+3 to toggle description (in full-scree mode),
+// progress bar and player controls accordingly.
+// In the latest versions of YouTube it may not work, so replace
+// var el = document.getElementById(idOrClass);
+// to
+// var el = document;
 javascript:(function () {
     function toggleDisplayNone (className){
         var elements = document.getElementsByClassName(className);
